@@ -211,8 +211,8 @@ pub fn spawn_level(
     background_image: &Option<Handle<Image>>,
     commands: &mut Commands,
     asset_server: &AssetServer,
-    images: &Assets<Image>,
-    texture_atlases: &mut Assets<TextureAtlasLayout>,
+    #[cfg(feature = "render")] images: &Assets<Image>,
+    #[cfg(feature = "render")] texture_atlases: &mut Assets<TextureAtlasLayout>,
     ldtk_entity_map: &LdtkEntityMap,
     ldtk_int_cell_map: &LdtkIntCellMap,
     entity_definition_map: &HashMap<i32, &EntityDefinition>,
@@ -248,6 +248,7 @@ pub fn spawn_level(
         layer_z += 1;
 
         // Spawn background image
+        #[cfg(feature = "render")]
         if let (Some(background_image_handle), Some(background_position)) =
             (background_image, level.bg_pos())
         {
@@ -318,6 +319,7 @@ pub fn spawn_level(
                                 tileset,
                                 tileset_definition,
                                 asset_server,
+                                #[cfg(feature = "render")]
                                 texture_atlases,
                             );
 
@@ -346,6 +348,7 @@ pub fn spawn_level(
                                     tileset,
                                     tileset_definition,
                                     asset_server,
+                                    #[cfg(feature = "render")]
                                     texture_atlases,
                                 );
 

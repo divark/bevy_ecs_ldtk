@@ -328,6 +328,7 @@ pub trait LdtkEntity {
         tileset: Option<&Handle<Image>>,
         tileset_definition: Option<&TilesetDefinition>,
         asset_server: &AssetServer,
+        #[cfg(feature = "render")]
         texture_atlases: &mut Assets<TextureAtlasLayout>,
     ) -> Self;
 }
@@ -339,6 +340,7 @@ impl LdtkEntity for EntityInstanceBundle {
         _: Option<&Handle<Image>>,
         _: Option<&TilesetDefinition>,
         _: &AssetServer,
+        #[cfg(feature = "render")]
         _: &mut Assets<TextureAtlasLayout>,
     ) -> Self {
         EntityInstanceBundle {
@@ -354,6 +356,7 @@ impl LdtkEntity for SpriteBundle {
         tileset: Option<&Handle<Image>>,
         _: Option<&TilesetDefinition>,
         _: &AssetServer,
+        #[cfg(feature = "render")]
         _: &mut Assets<TextureAtlasLayout>,
     ) -> Self {
         utils::sprite_bundle_from_entity_info(tileset)
@@ -367,8 +370,13 @@ impl LdtkEntity for SpriteSheetBundle {
         tileset: Option<&Handle<Image>>,
         tileset_definition: Option<&TilesetDefinition>,
         _: &AssetServer,
+        #[cfg(feature = "render")]
         texture_atlases: &mut Assets<TextureAtlasLayout>,
     ) -> Self {
+        #[cfg(not(feature = "render"))]
+        panic!("Ldtk SpriteSheetBundle: Spritesheet being constructed without rendering.");
+
+        #[cfg(feature = "render")]
         utils::sprite_sheet_bundle_from_entity_info(
             entity_instance,
             tileset,
@@ -386,6 +394,7 @@ impl LdtkEntity for Worldly {
         _: Option<&Handle<Image>>,
         _: Option<&TilesetDefinition>,
         _: &AssetServer,
+        #[cfg(feature = "render")]
         _: &mut Assets<TextureAtlasLayout>,
     ) -> Worldly {
         Worldly::from_entity_info(entity_instance)
@@ -399,6 +408,7 @@ impl LdtkEntity for GridCoords {
         _: Option<&Handle<Image>>,
         _: Option<&TilesetDefinition>,
         _: &AssetServer,
+        #[cfg(feature = "render")]
         _: &mut Assets<TextureAtlasLayout>,
     ) -> Self {
         GridCoords::from_entity_info(entity_instance, layer_instance)
@@ -428,6 +438,7 @@ pub trait PhantomLdtkEntityTrait {
         tileset: Option<&Handle<Image>>,
         tileset_definition: Option<&TilesetDefinition>,
         asset_server: &AssetServer,
+        #[cfg(feature = "render")]
         texture_atlases: &mut Assets<TextureAtlasLayout>,
     ) -> &'b mut EntityCommands<'a>;
 }
@@ -441,6 +452,7 @@ impl<B: LdtkEntity + Bundle> PhantomLdtkEntityTrait for PhantomLdtkEntity<B> {
         tileset: Option<&Handle<Image>>,
         tileset_definition: Option<&TilesetDefinition>,
         asset_server: &AssetServer,
+        #[cfg(feature = "render")]
         texture_atlases: &mut Assets<TextureAtlasLayout>,
     ) -> &'b mut EntityCommands<'a> {
         entity_commands.insert(B::bundle_entity(
@@ -449,6 +461,7 @@ impl<B: LdtkEntity + Bundle> PhantomLdtkEntityTrait for PhantomLdtkEntity<B> {
             tileset,
             tileset_definition,
             asset_server,
+            #[cfg(feature = "render")]
             texture_atlases,
         ))
     }
